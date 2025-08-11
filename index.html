@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Classification Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .quiz-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .question {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        
+        .question-number {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .number-display {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 15px 0;
+            color: #2c3e50;
+        }
+        
+        .classifications {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .classification-item {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .classification-item input {
+            margin-right: 8px;
+        }
+        
+        .classification-item label {
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .review-tooltip {
+            position: absolute;
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            max-width: 250px;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 5px;
+        }
+        
+        .review-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #333;
+        }
+        
+        .submit-btn {
+            background: #3498db;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto;
+            transition: background 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background: #2980b9;
+        }
+        
+        .results {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .score.perfect {
+            color: #27ae60;
+        }
+        
+        .score.needs-improvement {
+            color: #e74c3c;
+        }
+        
+        .help-screen {
+            margin-top: 30px;
+        }
+        
+        .incorrect-answer {
+            background: #fff5f5;
+            border: 2px solid #e74c3c;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        
+        .correct-highlight {
+            background: #d4edda;
+            padding: 2px 4px;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .retry-btn {
+            background: #27ae60;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 20px 10px;
+        }
+        
+        .retry-btn:hover {
+            background: #229954;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        
+        .instructions {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Number Classification Quiz</h1>
+        
+        <div class="instructions">
+            <strong>Instructions:</strong> Check all the boxes that apply to each number. You must get ALL classifications correct for each question to earn points.
+        </div>
+        
+        <div id="quiz-section">
+            <div id="questions-container"></div>
+            <button class="submit-btn" onclick="gradeQuiz()">Submit Quiz</button>
+        </div>
+        
+        <div id="results-section" class="hidden">
+            <div class="results">
+                <div id="score-display" class="score"></div>
+                <div id="message"></div>
+            </div>
+            <div id="help-section" class="help-screen hidden"></div>
+            <div style="text-align: center;">
+                <button class="retry-btn" onclick="startNewQuiz()">Take New Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Question bank with 150 questions
+        const questionBank = [
+            // Natural Numbers
+            { number: "1", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "7", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "15", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "23", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "42", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "100", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "365", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "1001", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "2024", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "50", correct: ["natural", "whole", "integer", "rational", "real"] },
+            
+            // Zero (Whole but not Natural)
+            { number: "0", correct: ["whole", "integer", "rational", "real"] },
+            
+            // Negative Integers
+            { number: "-1", correct: ["integer", "rational", "real"] },
+            { number: "-5", correct: ["integer", "rational", "real"] },
+            { number: "-10", correct: ["integer", "rational", "real"] },
+            { number: "-25", correct: ["integer", "rational", "real"] },
+            { number: "-100", correct: ["integer", "rational", "real"] },
+            { number: "-7", correct: ["integer", "rational", "real"] },
+            { number: "-15", correct: ["integer", "rational", "real"] },
+            { number: "-50", correct: ["integer", "rational", "real"] },
+            { number: "-200", correct: ["integer", "rational", "real"] },
+            { number: "-3", correct: ["integer", "rational", "real"] },
+            
+            // Positive Fractions
+            { number: "1/2", correct: ["rational", "real"] },
+            { number: "3/4", correct: ["rational", "real"] },
+            { number: "2/3", correct: ["rational", "real"] },
+            { number: "5/6", correct: ["rational", "real"] },
+            { number: "7/8", correct: ["rational", "real"] },
+            { number: "1/3", correct: ["rational", "real"] },
+            { number: "2/5", correct: ["rational", "real"] },
+            { number: "3/5", correct: ["rational", "real"] },
+            { number: "4/5", correct: ["rational", "real"] },
+            { number: "1/4", correct: ["rational", "real"] },
+            
+            // Negative Fractions
+            { number: "-1/2", correct: ["rational", "real"] },
+            { number: "-3/4", correct: ["rational", "real"] },
+            { number: "-2/3", correct: ["rational", "real"] },
+            { number: "-1/3", correct: ["rational", "real"] },
+            { number: "-5/6", correct: ["rational", "real"] },
+            { number: "-1/4", correct: ["rational", "real"] },
+            { number: "-2/5", correct: ["rational", "real"] },
+            { number: "-7/8", correct: ["rational", "real"] },
+            { number: "-3/5", correct: ["rational", "real"] },
+            { number: "-4/5", correct: ["rational", "real"] },
+            
+            // Decimals (Terminating)
+            { number: "0.5", correct: ["rational", "real"] },
+            { number: "0.25", correct: ["rational", "real"] },
+            { number: "0.75", correct: ["rational", "real"] },
+            { number: "0.125", correct: ["rational", "real"] },
+            { number: "0.375", correct: ["rational", "real"] },
+            { number: "0.625", correct: ["rational", "real"] },
+            { number: "0.875", correct: ["rational", "real"] },
+            { number: "1.5", correct: ["rational", "real"] },
+            { number: "2.25", correct: ["rational", "real"] },
+            { number: "3.75", correct: ["rational", "real"] },
+            
+            // Negative Decimals (Terminating)
+            { number: "-0.5", correct: ["rational", "real"] },
+            { number: "-0.25", correct: ["rational", "real"] },
+            { number: "-0.75", correct: ["rational", "real"] },
+            { number: "-1.5", correct: ["rational", "real"] },
+            { number: "-2.25", correct: ["rational", "real"] },
+            { number: "-0.125", correct: ["rational", "real"] },
+            { number: "-0.375", correct: ["rational", "real"] },
+            { number: "-0.625", correct: ["rational", "real"] },
+            { number: "-0.875", correct: ["rational", "real"] },
+            { number: "-3.75", correct: ["rational", "real"] },
+            
+            // Repeating Decimals
+            { number: "0.333...", correct: ["rational", "real"] },
+            { number: "0.666...", correct: ["rational", "real"] },
+            { number: "0.142857142857...", correct: ["rational", "real"] },
+            { number: "0.090909...", correct: ["rational", "real"] },
+            { number: "0.181818...", correct: ["rational", "real"] },
+            { number: "0.272727...", correct: ["rational", "real"] },
+            { number: "0.454545...", correct: ["rational", "real"] },
+            { number: "0.636363...", correct: ["rational", "real"] },
+            { number: "0.727272...", correct: ["rational", "real"] },
+            { number: "0.818181...", correct: ["rational", "real"] },
+            
+            // Negative Repeating Decimals
+            { number: "-0.333...", correct: ["rational", "real"] },
+            { number: "-0.666...", correct: ["rational", "real"] },
+            { number: "-0.142857142857...", correct: ["rational", "real"] },
+            { number: "-0.090909...", correct: ["rational", "real"] },
+            { number: "-0.181818...", correct: ["rational", "real"] },
+            { number: "-0.272727...", correct: ["rational", "real"] },
+            { number: "-0.454545...", correct: ["rational", "real"] },
+            { number: "-0.636363...", correct: ["rational", "real"] },
+            { number: "-0.727272...", correct: ["rational", "real"] },
+            { number: "-0.818181...", correct: ["rational", "real"] },
+            
+            // Mixed Numbers (converted to improper fractions)
+            { number: "1 1/2", correct: ["rational", "real"] },
+            { number: "2 1/3", correct: ["rational", "real"] },
+            { number: "3 1/4", correct: ["rational", "real"] },
+            { number: "1 2/3", correct: ["rational", "real"] },
+            { number: "2 3/4", correct: ["rational", "real"] },
+            { number: "4 1/2", correct: ["rational", "real"] },
+            { number: "5 1/3", correct: ["rational", "real"] },
+            { number: "3 2/5", correct: ["rational", "real"] },
+            { number: "2 5/8", correct: ["rational", "real"] },
+            { number: "1 3/5", correct: ["rational", "real"] },
+            
+            // Irrational Numbers (using decimal approximations)
+            { number: "1.41421356... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "1.73205080... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "2.23606797... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "2.44948974... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "2.64575131... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "2.82842712... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "3.16227766... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "3.31662479... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "3.46410161... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "3.60555127... (doesn't repeat)", correct: ["irrational", "real"] },
+            
+            // More Irrational Numbers
+            { number: "2.71828182... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "1.61803398... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "0.57721566... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "4.66920160... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "5.19615242... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "5.65685424... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "6.08276253... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "6.48074069... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "6.85565460... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "7.21110255... (doesn't repeat)", correct: ["irrational", "real"] },
+            
+            // Additional Natural Numbers
+            { number: "13", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "29", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "37", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "41", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "61", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "73", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "89", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "97", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "101", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "113", correct: ["natural", "whole", "integer", "rational", "real"] },
+            
+            // Additional Negative Integers
+            { number: "-13", correct: ["integer", "rational", "real"] },
+            { number: "-17", correct: ["integer", "rational", "real"] },
+            { number: "-23", correct: ["integer", "rational", "real"] },
+            { number: "-29", correct: ["integer", "rational", "real"] },
+            { number: "-31", correct: ["integer", "rational", "real"] },
+            { number: "-37", correct: ["integer", "rational", "real"] },
+            { number: "-41", correct: ["integer", "rational", "real"] },
+            { number: "-43", correct: ["integer", "rational", "real"] },
+            { number: "-47", correct: ["integer", "rational", "real"] },
+            { number: "-53", correct: ["integer", "rational", "real"] },
+            
+            // Additional Fractions
+            { number: "1/5", correct: ["rational", "real"] },
+            { number: "1/6", correct: ["rational", "real"] },
+            { number: "1/7", correct: ["rational", "real"] },
+            { number: "1/8", correct: ["rational", "real"] },
+            { number: "1/9", correct: ["rational", "real"] },
+            { number: "1/10", correct: ["rational", "real"] },
+            { number: "5/7", correct: ["rational", "real"] },
+            { number: "6/7", correct: ["rational", "real"] },
+            { number: "7/9", correct: ["rational", "real"] },
+            { number: "8/9", correct: ["rational", "real"] },
+            
+            // Additional Negative Fractions
+            { number: "-1/5", correct: ["rational", "real"] },
+            { number: "-1/6", correct: ["rational", "real"] },
+            { number: "-1/7", correct: ["rational", "real"] },
+            { number: "-1/8", correct: ["rational", "real"] },
+            { number: "-1/9", correct: ["rational", "real"] },
+            { number: "-1/10", correct: ["rational", "real"] },
+            { number: "-5/7", correct: ["rational", "real"] },
+            { number: "-6/7", correct: ["rational", "real"] },
+            { number: "-7/9", correct: ["rational", "real"] },
+            { number: "-8/9", correct: ["rational", "real"] }
+        ];
+        
+        const classifications = {
+            natural: "Natural numbers are positive counting numbers (1, 2, 3, 4, ...)",
+            whole: "Whole numbers include all natural numbers plus zero (0, 1, 2, 3, ...)",
+            integer: "Integers include all positive and negative whole numbers (..., -2, -1, 0, 1, 2, ...)",
+            rational: "Rational numbers can be expressed as a fraction a/b where a and b are integers and b ≠ 0",
+            irrational: "Irrational numbers cannot be expressed as a simple fraction and have non-repeating, non-terminating decimal expansions",
+            real: "Real numbers include all rational and irrational numbers"
+        };
+        
+        let currentQuestions = [];
+        let userAnswers = [];
+        
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        function startNewQuiz() {
+            currentQuestions = shuffleArray(questionBank).slice(0, 10);
+            userAnswers = [];
+            
+            document.getElementById('quiz-section').classList.remove('hidden');
+            document.getElementById('results-section').classList.add('hidden');
+            
+            renderQuestions();
+        }
+        
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+            
+            currentQuestions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <div class="question-number">${index + 1}.</div>
+                    <div class="number-display">${question.number}</div>
+                    <div class="classifications">
+                        ${Object.keys(classifications).map(type => `
+                            <div class="classification-item">
+                                <input type="checkbox" id="q${index}_${type}" data-question="${index}" data-type="${type}">
+                                <label for="q${index}_${type}">${type.charAt(0).toUpperCase() + type.slice(1)}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+            });
+        }
+        
+        function gradeQuiz() {
+            userAnswers = [];
+            
+            currentQuestions.forEach((question, index) => {
+                const checkedTypes = [];
+                Object.keys(classifications).forEach(type => {
+                    const checkbox = document.getElementById(`q${index}_${type}`);
+                    if (checkbox.checked) {
+                        checkedTypes.push(type);
+                    }
+                });
+                
+                const isCorrect = arraysEqual(checkedTypes.sort(), question.correct.sort());
+                userAnswers.push({
+                    question: question,
+                    userAnswer: checkedTypes,
+                    correct: isCorrect
+                });
+            });
+            
+            const correctCount = userAnswers.filter(answer => answer.correct).length;
+            const score = correctCount * 10;
+            
+            showResults(score, correctCount);
+        }
+        
+        function arraysEqual(a, b) {
+            return a.length === b.length && a.every((val, index) => val === b[index]);
+        }
+        
+        function showResults(score, correctCount) {
+            document.getElementById('quiz-section').classList.add('hidden');
+            document.getElementById('results-section').classList.remove('hidden');
+            
+            const scoreDisplay = document.getElementById('score-display');
+            const message = document.getElementById('message');
+            const helpSection = document.getElementById('help-section');
+            
+            scoreDisplay.textContent = `Score: ${score}/100 (${correctCount}/10 correct)`;
+            
+            if (score === 100) {
+                scoreDisplay.className = 'score perfect';
+                message.innerHTML = '<h2>🎉 Congratulations! 🎉</h2><p>Perfect score! You have mastered number classifications!</p>';
+                helpSection.classList.add('hidden');
+            } else {
+                scoreDisplay.className = 'score needs-improvement';
+                message.innerHTML = '<h2>Good effort!</h2><p>Review the incorrect answers below to improve your understanding.</p>';
+                helpSection.classList.remove('hidden');
+                showHelp();
+            }
+        }
+        
+        function showHelp() {
+            const helpSection = document.getElementById('help-section');
+            const incorrectAnswers = userAnswers.filter(answer => !answer.correct);
+            
+            helpSection.innerHTML = '<h3>Review Incorrect Answers:</h3>';
+            
+            incorrectAnswers.forEach((answer, index) => {
+                const questionIndex = userAnswers.indexOf(answer) + 1;
+                const helpDiv = document.createElement('div');
+                helpDiv.className = 'incorrect-answer';
+                
+                const correctHighlights = answer.question.correct.map(type => 
+                    `<span class="correct-highlight" data-type="${type}">${type}</span>`
+                ).join(', ');
+                
+                helpDiv.innerHTML = `
+                    <div><strong>Question ${questionIndex}: ${answer.question.number}</strong></div>
+                    <div>Your answer: ${answer.userAnswer.length > 0 ? answer.userAnswer.join(', ') : 'None selected'}</div>
+                    <div>Correct answer: ${correctHighlights}</div>
+                `;
+                
+                helpSection.appendChild(helpDiv);
+            });
+            
+            // Add hover tooltips for correct highlights and classification labels in help section
+            document.querySelectorAll('.correct-highlight').forEach(element => {
+                element.addEventListener('mouseenter', function(e) {
+                    const type = e.target.getAttribute('data-type');
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'review-tooltip';
+                    tooltip.textContent = classifications[type];
+                    tooltip.style.opacity = '1';
+                    e.target.appendChild(tooltip);
+                });
+                
+                element.addEventListener('mouseleave', function(e) {
+                    const tooltip = e.target.querySelector('.review-tooltip');
+                    if (tooltip) {
+                        tooltip.remove();
+                    }
+                });
+            });
+            
+            // Add tooltips for classification labels in the help section
+            document.querySelectorAll('.help-classification-label').forEach(element => {
+                element.addEventListener('mouseenter', function(e) {
+                    const type = e.target.getAttribute('data-type');
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'review-tooltip';
+                    tooltip.textContent = classifications[type];
+                    tooltip.style.opacity = '1';
+                    e.target.appendChild(tooltip);
+                });
+                
+                element.addEventListener('mouseleave', function(e) {
+                    const tooltip = e.target.querySelector('.review-tooltip');
+                    if (tooltip) {
+                        tooltip.remove();
+                    }
+                });
+            });
+        }
+        
+        // Initialize the quiz
+        startNewQuiz();
+    </script>
+</body>
+</html>
