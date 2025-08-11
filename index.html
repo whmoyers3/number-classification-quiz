@@ -1,45 +1,941 @@
-📊 Number Classification
-Study Guide & Interactive Quiz
-📚 Study Guide
-🧠 Take Quiz
-NATURAL
-Counting numbers we use in everyday life
-Examples:
-1, 2, 3, 4, 5, 42, 100...
-WHOLE
-Natural numbers plus zero
-Examples:
-0, 1, 2, 3, 4, 5, 42, 100...
-INTEGER
-Whole numbers and their negatives
-Examples:
-...-3, -2, -1, 0, 1, 2, 3...
-RATIONAL
-Numbers that can be written as fractions (including repeating decimals)
-Examples:
-1/2, 0.75, -3, 0.333...
-IRRATIONAL
-Numbers that cannot be written as fractions (non-repeating, infinite decimals)
-Examples:
-√2, π, e, 2.64575131... (doesn't repeat)
-REAL
-All rational and irrational numbers combined
-Examples:
-All numbers above!
-🔄 Number Hierarchy
-Natural Numbers
-→ 1, 2, 3, 4...
-⬇
-Whole Numbers
-→ Natural + 0
-⬇
-Integers
-→ Whole + Negatives
-⬇
-Rational Numbers
-→ Integers + Fractions
-⬇
-Real Numbers
-→ Rational + Irrational
-🔑 Key Concept
-Each level includes all the levels above it! For example: Every natural number is also whole, integer, rational, and real.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Classification Quiz & Study Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .app-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .app-header h1 {
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .app-header p {
+            font-size: 1.2em;
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .tab-container {
+            background: white;
+            border-radius: 20px 20px 0 0;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab-navigation {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 3px solid #e9ecef;
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 20px;
+            background: none;
+            border: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #6c757d;
+        }
+        
+        .tab-button.active {
+            background: white;
+            color: #495057;
+            border-bottom: 3px solid #007bff;
+            transform: translateY(3px);
+        }
+        
+        .tab-button:hover:not(.active) {
+            background: #e9ecef;
+            color: #495057;
+        }
+        
+        .tab-content {
+            background: white;
+            padding: 40px;
+            border-radius: 0 0 20px 20px;
+            min-height: 600px;
+        }
+        
+        .tab-panel {
+            display: none;
+        }
+        
+        .tab-panel.active {
+            display: block;
+        }
+        
+        /* Quiz Styles */
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .question {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        
+        .question-number {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .number-display {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 15px 0;
+            color: #2c3e50;
+        }
+        
+        .classifications {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .classification-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .classification-item input {
+            margin-right: 8px;
+        }
+        
+        .classification-item label {
+            cursor: pointer;
+        }
+        
+        .submit-btn, .retry-btn {
+            background: #3498db;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto;
+            transition: background 0.3s;
+        }
+        
+        .submit-btn:hover, .retry-btn:hover {
+            background: #2980b9;
+        }
+        
+        .retry-btn {
+            background: #27ae60;
+            margin: 20px 10px;
+        }
+        
+        .retry-btn:hover {
+            background: #229954;
+        }
+        
+        .results {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .score.perfect {
+            color: #27ae60;
+        }
+        
+        .score.needs-improvement {
+            color: #e74c3c;
+        }
+        
+        .help-screen {
+            margin-top: 30px;
+        }
+        
+        .incorrect-answer {
+            background: #fff5f5;
+            border: 2px solid #e74c3c;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        
+        .correct-highlight {
+            background: #d4edda;
+            padding: 2px 4px;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .instructions {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .review-tooltip {
+            position: absolute;
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            max-width: 250px;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 5px;
+        }
+        
+        .review-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #333;
+        }
+        
+        /* Study Guide Styles */
+        .study-guide {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .classification-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .classification-card {
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .classification-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .classification-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--accent-color);
+        }
+        
+        .natural {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            --accent-color: #e74c3c;
+        }
+        
+        .whole {
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            --accent-color: #9b59b6;
+        }
+        
+        .integer {
+            background: linear-gradient(135deg, #fad0c4 0%, #ffd1ff 100%);
+            --accent-color: #f39c12;
+        }
+        
+        .rational {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --accent-color: #1abc9c;
+        }
+        
+        .irrational {
+            background: linear-gradient(135deg, #fdbb2d 0%, #22c1c3 100%);
+            --accent-color: #f1c40f;
+        }
+        
+        .real {
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+            --accent-color: #3498db;
+        }
+        
+        .card-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .card-description {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #34495e;
+            margin-bottom: 20px;
+        }
+        
+        .examples {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        
+        .examples-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .examples-list {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .hierarchy-section {
+            margin-top: 50px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hierarchy-title {
+            text-align: center;
+            font-size: 2em;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        
+        .hierarchy-visual {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .hierarchy-level {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            min-width: 300px;
+            justify-content: center;
+        }
+        
+        .level-1 { border-left: 5px solid #e74c3c; }
+        .level-2 { border-left: 5px solid #9b59b6; }
+        .level-3 { border-left: 5px solid #f39c12; }
+        .level-4 { border-left: 5px solid #1abc9c; }
+        .level-5 { border-left: 5px solid #f1c40f; }
+        .level-6 { border-left: 5px solid #3498db; }
+        
+        .arrow {
+            font-size: 2em;
+            color: #7f8c8d;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .key-concept {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .key-concept h3 {
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+        
+        @media (max-width: 768px) {
+            .main-container { padding: 10px; }
+            .app-header h1 { font-size: 2em; }
+            .tab-content { padding: 20px; }
+            .classification-grid { grid-template-columns: 1fr; }
+            .hierarchy-level { min-width: 250px; }
+            .tab-button { font-size: 1em; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="app-header">
+            <h1>📊 Number Classification</h1>
+            <p>Study Guide & Interactive Quiz</p>
+        </div>
+        
+        <div class="tab-container">
+            <div class="tab-navigation">
+                <button class="tab-button active" onclick="switchTab('study-guide')">📚 Study Guide</button>
+                <button class="tab-button" onclick="switchTab('quiz')">🧠 Take Quiz</button>
+            </div>
+            
+            <div class="tab-content">
+                <!-- Study Guide Tab -->
+                <div id="study-guide" class="tab-panel active">
+                    <div class="study-guide">
+                        <div class="classification-grid">
+                            <div class="classification-card natural">
+                                <div class="card-title">Natural</div>
+                                <div class="card-description">Counting numbers we use in everyday life</div>
+                                <div class="examples">
+                                    <div class="examples-title">Examples:</div>
+                                    <div class="examples-list">1, 2, 3, 4, 5, 42, 100...</div>
+                                </div>
+                            </div>
+                            
+                            <div class="classification-card whole">
+                                <div class="card-title">Whole</div>
+                                <div class="card-description">Natural numbers plus zero</div>
+                                <div class="examples">
+                                    <div class="examples-title">Examples:</div>
+                                    <div class="examples-list">0, 1, 2, 3, 4, 5, 42, 100...</div>
+                                </div>
+                            </div>
+                            
+                            <div class="classification-card integer">
+                                <div class="card-title">Integer</div>
+                                <div class="card-description">Whole numbers and their negatives</div>
+                                <div class="examples">
+                                    <div class="examples-title">Examples:</div>
+                                    <div class="examples-list">...-3, -2, -1, 0, 1, 2, 3...</div>
+                                </div>
+                            </div>
+                            
+                            <div class="classification-card rational">
+                                <div class="card-title">Rational</div>
+                                <div class="card-description">Numbers that can be written as fractions (including repeating decimals)</div>
+                                <div class="examples">
+                                    <div class="examples-title">Examples:</div>
+                                    <div class="examples-list">1/2, 0.75, -3, 0.333...</div>
+                                </div>
+                            </div>
+                            
+                            <div class="classification-card irrational">
+                                <div class="card-title">Irrational</div>
+                                <div class="card-description">Numbers that cannot be written as fractions (non-repeating, infinite decimals)</div>
+                                <div class="examples">
+                                    <div class="examples-title">Examples:</div>
+                                    <div class="examples-list">√2, π, e, 2.64575131... (doesn't repeat)</div>
+                                </div>
+                            </div>
+                            
+                            <div class="classification-card real">
+                                <div class="card-title">Real</div>
+                                <div class="card-description">All rational and irrational numbers combined</div>
+                                <div class="examples">
+                                    <div class="examples-title">Examples:</div>
+                                    <div class="examples-list">All numbers above!</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="hierarchy-section">
+                            <div class="hierarchy-title">🔄 Number Hierarchy</div>
+                            <div class="hierarchy-visual">
+                                <div class="hierarchy-level level-1">
+                                    <strong>Natural Numbers</strong> → 1, 2, 3, 4...
+                                </div>
+                                <div class="arrow">⬇</div>
+                                <div class="hierarchy-level level-2">
+                                    <strong>Whole Numbers</strong> → Natural + 0
+                                </div>
+                                <div class="arrow">⬇</div>
+                                <div class="hierarchy-level level-3">
+                                    <strong>Integers</strong> → Whole + Negatives
+                                </div>
+                                <div class="arrow">⬇</div>
+                                <div class="hierarchy-level level-4">
+                                    <strong>Rational Numbers</strong> → Integers + Fractions
+                                </div>
+                                <div class="arrow">⬇</div>
+                                <div class="hierarchy-level level-6">
+                                    <strong>Real Numbers</strong> → Rational + Irrational
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="key-concept">
+                            <h3>🔑 Key Concept</h3>
+                            <p>Each level <strong>includes</strong> all the levels above it!<br>
+                            For example: Every natural number is also whole, integer, rational, and real.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quiz Tab -->
+                <div id="quiz" class="tab-panel">
+                    <div class="quiz-container">
+                        <div class="instructions">
+                            <strong>Instructions:</strong> Check all the boxes that apply to each number. You must get ALL classifications correct for each question to earn points.
+                        </div>
+                        
+                        <div id="quiz-section">
+                            <div id="questions-container"></div>
+                            <button class="submit-btn" onclick="gradeQuiz()">Submit Quiz</button>
+                        </div>
+                        
+                        <div id="results-section" class="hidden">
+                            <div class="results">
+                                <div id="score-display" class="score"></div>
+                                <div id="message"></div>
+                            </div>
+                            <div id="help-section" class="help-screen hidden"></div>
+                            <div style="text-align: center;">
+                                <button class="retry-btn" onclick="startNewQuiz()">Take New Quiz</button>
+                                <button class="retry-btn" onclick="switchTab('study-guide')">📚 Study More</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Hide all tab panels
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected tab panel
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+        
+        // Question bank with 150 questions
+        const questionBank = [
+            // Natural Numbers
+            { number: "1", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "7", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "15", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "23", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "42", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "100", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "365", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "1001", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "2024", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "50", correct: ["natural", "whole", "integer", "rational", "real"] },
+            
+            // Zero (Whole but not Natural)
+            { number: "0", correct: ["whole", "integer", "rational", "real"] },
+            
+            // Negative Integers
+            { number: "-1", correct: ["integer", "rational", "real"] },
+            { number: "-5", correct: ["integer", "rational", "real"] },
+            { number: "-10", correct: ["integer", "rational", "real"] },
+            { number: "-25", correct: ["integer", "rational", "real"] },
+            { number: "-100", correct: ["integer", "rational", "real"] },
+            { number: "-7", correct: ["integer", "rational", "real"] },
+            { number: "-15", correct: ["integer", "rational", "real"] },
+            { number: "-50", correct: ["integer", "rational", "real"] },
+            { number: "-200", correct: ["integer", "rational", "real"] },
+            { number: "-3", correct: ["integer", "rational", "real"] },
+            
+            // Positive Fractions
+            { number: "1/2", correct: ["rational", "real"] },
+            { number: "3/4", correct: ["rational", "real"] },
+            { number: "2/3", correct: ["rational", "real"] },
+            { number: "5/6", correct: ["rational", "real"] },
+            { number: "7/8", correct: ["rational", "real"] },
+            { number: "1/3", correct: ["rational", "real"] },
+            { number: "2/5", correct: ["rational", "real"] },
+            { number: "3/5", correct: ["rational", "real"] },
+            { number: "4/5", correct: ["rational", "real"] },
+            { number: "1/4", correct: ["rational", "real"] },
+            
+            // Negative Fractions
+            { number: "-1/2", correct: ["rational", "real"] },
+            { number: "-3/4", correct: ["rational", "real"] },
+            { number: "-2/3", correct: ["rational", "real"] },
+            { number: "-1/3", correct: ["rational", "real"] },
+            { number: "-5/6", correct: ["rational", "real"] },
+            { number: "-1/4", correct: ["rational", "real"] },
+            { number: "-2/5", correct: ["rational", "real"] },
+            { number: "-7/8", correct: ["rational", "real"] },
+            { number: "-3/5", correct: ["rational", "real"] },
+            { number: "-4/5", correct: ["rational", "real"] },
+            
+            // Decimals (Terminating)
+            { number: "0.5", correct: ["rational", "real"] },
+            { number: "0.25", correct: ["rational", "real"] },
+            { number: "0.75", correct: ["rational", "real"] },
+            { number: "0.125", correct: ["rational", "real"] },
+            { number: "0.375", correct: ["rational", "real"] },
+            { number: "0.625", correct: ["rational", "real"] },
+            { number: "0.875", correct: ["rational", "real"] },
+            { number: "1.5", correct: ["rational", "real"] },
+            { number: "2.25", correct: ["rational", "real"] },
+            { number: "3.75", correct: ["rational", "real"] },
+            
+            // Negative Decimals (Terminating)
+            { number: "-0.5", correct: ["rational", "real"] },
+            { number: "-0.25", correct: ["rational", "real"] },
+            { number: "-0.75", correct: ["rational", "real"] },
+            { number: "-1.5", correct: ["rational", "real"] },
+            { number: "-2.25", correct: ["rational", "real"] },
+            { number: "-0.125", correct: ["rational", "real"] },
+            { number: "-0.375", correct: ["rational", "real"] },
+            { number: "-0.625", correct: ["rational", "real"] },
+            { number: "-0.875", correct: ["rational", "real"] },
+            { number: "-3.75", correct: ["rational", "real"] },
+            
+            // Repeating Decimals
+            { number: "0.333...", correct: ["rational", "real"] },
+            { number: "0.666...", correct: ["rational", "real"] },
+            { number: "0.142857142857...", correct: ["rational", "real"] },
+            { number: "0.090909...", correct: ["rational", "real"] },
+            { number: "0.181818...", correct: ["rational", "real"] },
+            { number: "0.272727...", correct: ["rational", "real"] },
+            { number: "0.454545...", correct: ["rational", "real"] },
+            { number: "0.636363...", correct: ["rational", "real"] },
+            { number: "0.727272...", correct: ["rational", "real"] },
+            { number: "0.818181...", correct: ["rational", "real"] },
+            
+            // Negative Repeating Decimals
+            { number: "-0.333...", correct: ["rational", "real"] },
+            { number: "-0.666...", correct: ["rational", "real"] },
+            { number: "-0.142857142857...", correct: ["rational", "real"] },
+            { number: "-0.090909...", correct: ["rational", "real"] },
+            { number: "-0.181818...", correct: ["rational", "real"] },
+            { number: "-0.272727...", correct: ["rational", "real"] },
+            { number: "-0.454545...", correct: ["rational", "real"] },
+            { number: "-0.636363...", correct: ["rational", "real"] },
+            { number: "-0.727272...", correct: ["rational", "real"] },
+            { number: "-0.818181...", correct: ["rational", "real"] },
+            
+            // Mixed Numbers (converted to improper fractions)
+            { number: "1 1/2", correct: ["rational", "real"] },
+            { number: "2 1/3", correct: ["rational", "real"] },
+            { number: "3 1/4", correct: ["rational", "real"] },
+            { number: "1 2/3", correct: ["rational", "real"] },
+            { number: "2 3/4", correct: ["rational", "real"] },
+            { number: "4 1/2", correct: ["rational", "real"] },
+            { number: "5 1/3", correct: ["rational", "real"] },
+            { number: "3 2/5", correct: ["rational", "real"] },
+            { number: "2 5/8", correct: ["rational", "real"] },
+            { number: "1 3/5", correct: ["rational", "real"] },
+            
+            // Irrational Numbers (using decimal approximations)
+            { number: "1.41421356... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "1.73205080... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "2.23606797... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "2.44948974... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "2.64575131... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "2.82842712... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "3.16227766... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "3.31662479... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "3.46410161... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "3.60555127... (doesn't repeat)", correct: ["irrational", "real"] },
+            
+            // More Irrational Numbers
+            { number: "2.71828182... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "1.61803398... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "0.57721566... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "4.66920160... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "5.19615242... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "5.65685424... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "6.08276253... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "6.48074069... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "6.85565460... (doesn't repeat)", correct: ["irrational", "real"] },
+            { number: "7.21110255... (doesn't repeat)", correct: ["irrational", "real"] },
+            
+            // Additional Natural Numbers
+            { number: "13", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "29", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "37", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "41", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "61", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "73", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "89", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "97", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "101", correct: ["natural", "whole", "integer", "rational", "real"] },
+            { number: "113", correct: ["natural", "whole", "integer", "rational", "real"] },
+            
+            // Additional Negative Integers
+            { number: "-13", correct: ["integer", "rational", "real"] },
+            { number: "-17", correct: ["integer", "rational", "real"] },
+            { number: "-23", correct: ["integer", "rational", "real"] },
+            { number: "-29", correct: ["integer", "rational", "real"] },
+            { number: "-31", correct: ["integer", "rational", "real"] },
+            { number: "-37", correct: ["integer", "rational", "real"] },
+            { number: "-41", correct: ["integer", "rational", "real"] },
+            { number: "-43", correct: ["integer", "rational", "real"] },
+            { number: "-47", correct: ["integer", "rational", "real"] },
+            { number: "-53", correct: ["integer", "rational", "real"] },
+            
+            // Additional Fractions
+            { number: "1/5", correct: ["rational", "real"] },
+            { number: "1/6", correct: ["rational", "real"] },
+            { number: "1/7", correct: ["rational", "real"] },
+            { number: "1/8", correct: ["rational", "real"] },
+            { number: "1/9", correct: ["rational", "real"] },
+            { number: "1/10", correct: ["rational", "real"] },
+            { number: "5/7", correct: ["rational", "real"] },
+            { number: "6/7", correct: ["rational", "real"] },
+            { number: "7/9", correct: ["rational", "real"] },
+            { number: "8/9", correct: ["rational", "real"] },
+            
+            // Additional Negative Fractions
+            { number: "-1/5", correct: ["rational", "real"] },
+            { number: "-1/6", correct: ["rational", "real"] },
+            { number: "-1/7", correct: ["rational", "real"] },
+            { number: "-1/8", correct: ["rational", "real"] },
+            { number: "-1/9", correct: ["rational", "real"] },
+            { number: "-1/10", correct: ["rational", "real"] },
+            { number: "-5/7", correct: ["rational", "real"] },
+            { number: "-6/7", correct: ["rational", "real"] },
+            { number: "-7/9", correct: ["rational", "real"] },
+            { number: "-8/9", correct: ["rational", "real"] }
+        ];
+        
+        const classifications = {
+            natural: "Natural numbers are positive counting numbers (1, 2, 3, 4, ...)",
+            whole: "Whole numbers include all natural numbers plus zero (0, 1, 2, 3, ...)",
+            integer: "Integers include all positive and negative whole numbers (..., -2, -1, 0, 1, 2, ...)",
+            rational: "Rational numbers can be expressed as a fraction a/b where a and b are integers and b ≠ 0",
+            irrational: "Irrational numbers cannot be expressed as a simple fraction and have non-repeating, non-terminating decimal expansions",
+            real: "Real numbers include all rational and irrational numbers"
+        };
+        
+        let currentQuestions = [];
+        let userAnswers = [];
+        
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        function startNewQuiz() {
+            currentQuestions = shuffleArray(questionBank).slice(0, 10);
+            userAnswers = [];
+            
+            document.getElementById('quiz-section').classList.remove('hidden');
+            document.getElementById('results-section').classList.add('hidden');
+            
+            renderQuestions();
+        }
+        
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+            
+            currentQuestions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <div class="question-number">${index + 1}.</div>
+                    <div class="number-display">${question.number}</div>
+                    <div class="classifications">
+                        ${Object.keys(classifications).map(type => `
+                            <div class="classification-item">
+                                <input type="checkbox" id="q${index}_${type}" data-question="${index}" data-type="${type}">
+                                <label for="q${index}_${type}">${type.charAt(0).toUpperCase() + type.slice(1)}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+            });
+        }
+        
+        function gradeQuiz() {
+            userAnswers = [];
+            
+            currentQuestions.forEach((question, index) => {
+                const checkedTypes = [];
+                Object.keys(classifications).forEach(type => {
+                    const checkbox = document.getElementById(`q${index}_${type}`);
+                    if (checkbox.checked) {
+                        checkedTypes.push(type);
+                    }
+                });
+                
+                const isCorrect = arraysEqual(checkedTypes.sort(), question.correct.sort());
+                userAnswers.push({
+                    question: question,
+                    userAnswer: checkedTypes,
+                    correct: isCorrect
+                });
+            });
+            
+            const correctCount = userAnswers.filter(answer => answer.correct).length;
+            const score = correctCount * 10;
+            
+            showResults(score, correctCount);
+        }
+        
+        function arraysEqual(a, b) {
+            return a.length === b.length && a.every((val, index) => val === b[index]);
+        }
+        
+        function showResults(score, correctCount) {
+            document.getElementById('quiz-section').classList.add('hidden');
+            document.getElementById('results-section').classList.remove('hidden');
+            
+            const scoreDisplay = document.getElementById('score-display');
+            const message = document.getElementById('message');
+            const helpSection = document.getElementById('help-section');
+            
+            scoreDisplay.textContent = `Score: ${score}/100 (${correctCount}/10 correct)`;
+            
+            if (score === 100) {
+                scoreDisplay.className = 'score perfect';
+                message.innerHTML = '<h2>🎉 Congratulations! 🎉</h2><p>Perfect score! You have mastered number classifications!</p>';
+                helpSection.classList.add('hidden');
+            } else {
+                scoreDisplay.className = 'score needs-improvement';
+                message.innerHTML = '<h2>Good effort!</h2><p>Review the incorrect answers below to improve your understanding.</p>';
+                helpSection.classList.remove('hidden');
+                showHelp();
+            }
+        }
+        
+        function showHelp() {
+            const helpSection = document.getElementById('help-section');
+            const incorrectAnswers = userAnswers.filter(answer => !answer.correct);
+            
+            helpSection.innerHTML = '<h3>Review Incorrect Answers:</h3>';
+            
+            incorrectAnswers.forEach((answer, index) => {
+                const questionIndex = userAnswers.indexOf(answer) + 1;
+                const helpDiv = document.createElement('div');
+                helpDiv.className = 'incorrect-answer';
+                
+                const correctHighlights = answer.question.correct.map(type => 
+                    `<span class="correct-highlight" data-type="${type}">${type}</span>`
+                ).join(', ');
+                
+                helpDiv.innerHTML = `
+                    <div><strong>Question ${questionIndex}: ${answer.question.number}</strong></div>
+                    <div>Your answer: ${answer.userAnswer.length > 0 ? answer.userAnswer.join(', ') : 'None selected'}</div>
+                    <div>Correct answer: ${correctHighlights}</div>
+                `;
+                
+                helpSection.appendChild(helpDiv);
+            });
+            
+            // Add hover tooltips for correct highlights and classification labels in help section
+            document.querySelectorAll('.correct-highlight').forEach(element => {
+                element.addEventListener('mouseenter', function(e) {
+                    const type = e.target.getAttribute('data-type');
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'review-tooltip';
+                    tooltip.textContent = classifications[type];
+                    tooltip.style.opacity = '1';
+                    e.target.appendChild(tooltip);
+                });
+                
+                element.addEventListener('mouseleave', function(e) {
+                    const tooltip = e.target.querySelector('.review-tooltip');
+                    if (tooltip) {
+                        tooltip.remove();
+                    }
+                });
+            });
+            
+            // Add tooltips for classification labels in the help section
+            document.querySelectorAll('.help-classification-label').forEach(element => {
+                element.addEventListener('mouseenter', function(e) {
+                    const type = e.target.getAttribute('data-type');
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'review-tooltip';
+                    tooltip.textContent = classifications[type];
+                    tooltip.style.opacity = '1';
+                    e.target.appendChild(tooltip);
+                });
+                
+                element.addEventListener('mouseleave', function(e) {
+                    const tooltip = e.target.querySelector('.review-tooltip');
+                    if (tooltip) {
+                        tooltip.remove();
+                    }
+                });
+            });
+        }
+        
+        // Initialize the quiz when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            startNewQuiz();
+        });
+    </script>
+</body>
+</html>
